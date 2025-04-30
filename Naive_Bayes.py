@@ -1,23 +1,40 @@
-from Dataset import Dataset
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+import joblib
 
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    dataset = Dataset()
-    train_data = dataset.get_train()
+class NaiveBayesModel:
+    def __init__(self):
+        # Khởi tạo mô hình Naive Bayes
+        self.model = MultinomialNB()
     
-    # Print the type of the dataset
-    print("train type:", type(train_data))
+    def train(self, X_train, y_train):
+        """
+        Huấn luyện mô hình Naive Bayes với dữ liệu X_train và nhãn y_train
+        """
+        self.model.fit(X_train, y_train)
     
-    # List all attributes and methods of the train dataset
-    print("Attributes and methods of train_data:")
-    print(dir(train_data))
+    def predict(self, X_test):
+        """
+        Dự đoán nhãn cho dữ liệu X_test
+        """
+        return self.model.predict(X_test)
+    
+    def evaluate(self, X_test, y_test):
+        """
+        Đánh giá mô hình trên tập test
+        """
+        predictions = self.predict(X_test)
+        accuracy = accuracy_score(y_test, predictions)
+        return accuracy
+    
+    def save_model(self, path):
+        """
+        Lưu mô hình vào file
+        """
+        joblib.dump(self.model, path)
+    
+    def load_model(self, path):
+        """
+        Tải mô hình từ file
+        """
+        self.model = joblib.load(path)
