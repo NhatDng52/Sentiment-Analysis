@@ -2,19 +2,24 @@ from pathlib import Path
 from transformers import AutoTokenizer,BertTokenizer ,BertForSequenceClassification, Trainer, TrainingArguments
 from datasets import Dataset
 import torch
-
+import torch.nn.functional as F
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class BertModel:
     def __init__(self, model_name='bert-base-uncased', num_labels=2):
         
         "Nếu train lân đầu: dùng 2 dòng dưới và cmt 3 dòng tiếp theo, nếu muốn dùng pretrained model sau khi train lần đầu, cmt 2 dòng dưới và bỏ cmt 3 dòng tiếp theo"
-        # self.tokenizer = BertTokenizer.from_pretrained(model_name)
-        # self.model = BertForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
+       
+        model_path = Path("./results/checkpoint-4287").resolve()
+        if model_path.exists():
+            self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')  # Hoặc model phù hợp nếu bạn đang dùng loại khác
+            self.model = BertForSequenceClassification.from_pretrained(str(model_path), num_labels=num_labels, local_files_only=True)
         
-        model_path = Path("D:/BTL Data Mining/results/checkpoint-4287").resolve()
-        self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')  # Hoặc model phù hợp nếu bạn đang dùng loại khác
-        self.model = BertForSequenceClassification.from_pretrained(str(model_path), num_labels=num_labels, local_files_only=True)
+        else:
+            self.tokenizer = BertTokenizer.from_pretrained(model_name)
+            self.model = BertForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
+        
+        
 
         self.model.to(device)
         self.trainer = None
@@ -73,3 +78,4 @@ class BertModel:
                 predictions.extend(batch_predictions.cpu().tolist())
 
         return predictions
+  

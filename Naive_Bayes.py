@@ -1,40 +1,26 @@
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 import joblib
+import numpy as np
 
 class NaiveBayesModel:
     def __init__(self):
-        # Khởi tạo mô hình Naive Bayes
         self.model = MultinomialNB()
-    
-    def train(self, X_train, y_train):
+        self.vectorizer = None  # Thêm vectorizer để giải mã các feature
+
+    def train(self, X_train, y_train, vectorizer=None):
         """
-        Huấn luyện mô hình Naive Bayes với dữ liệu X_train và nhãn y_train
+        Huấn luyện mô hình và lưu vectorizer nếu cần để giải thích mô hình
         """
         self.model.fit(X_train, y_train)
-    
+        self.vectorizer = vectorizer  # Lưu lại vectorizer để truy xuất tên từ
+
     def predict(self, X_test):
-        """
-        Dự đoán nhãn cho dữ liệu X_test
-        """
         return self.model.predict(X_test)
-    
+
     def evaluate(self, X_test, y_test):
-        """
-        Đánh giá mô hình trên tập test
-        """
         predictions = self.predict(X_test)
         accuracy = accuracy_score(y_test, predictions)
         return accuracy
-    
-    def save_model(self, path):
-        """
-        Lưu mô hình vào file
-        """
-        joblib.dump(self.model, path)
-    
-    def load_model(self, path):
-        """
-        Tải mô hình từ file
-        """
-        self.model = joblib.load(path)
+
+ 

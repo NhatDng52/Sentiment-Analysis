@@ -1,19 +1,9 @@
 from datasets import load_dataset
 import pandas as pd
-# Tải dataset bằng script custom
-dataset = load_dataset("./vietnamese_students_feedback", trust_remote_code=True)
-
-# # In thử vài dòng
-# for example in dataset["train"].select(range(30)):
-#     print("Sentence:", example["sentence"])
-#     """- `sentiment`: Sentiment class, with values 0 (negative), 1 (neutral) and 2 (positive)."""
-#     print("Sentiment:", example["sentiment"])
-#     #print("Topic:", example["topic"])
-#     print("-" * 40)
-    
+ 
 class Dataset:
     def __init__(self):
-        self.dataset = dataset
+        self.dataset = load_dataset("./vietnamese_students_feedback", trust_remote_code=True)
 
     def get_train(self):
         return self.dataset["train"]
@@ -26,7 +16,12 @@ class Dataset:
 
 if __name__ == "__main__":
     dataset = Dataset()
-
+    # in câu đầu vã nhãn đầu tiên của tập train
+    for i in range(30):
+        print("First sentence and label in train set:")
+        print("Sentence:", dataset.get_train()[i]["sentence"])
+        print("Sentiment:", dataset.get_train()[i]["sentiment"])
+        print("-" * 40)
     # Gộp cả 3 tập train, test, validation lại thành 1 dataframe
     all_data = pd.concat([
         dataset.get_train().to_pandas(),
